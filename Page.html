@@ -1,16 +1,28 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
+<title>Convertisseur Wikicode vers Module Apprentissage</title>
+<style>
+footer {
+	text-align : center;
+	font-size : 15px;
+	background-color : gray;
+}
+</style>
 </head>
 <body>
 Wikitexte d'entrée <br />
 <textarea cols=80 rows=20 id="input"></textarea>
-<center>Génération <select id="gen"><option></option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option></select> Type d'apprentissage <select id="learnsetType" onchange="toggleTemplate(this.value !== '')"><option></option><option>Reproduction</option><option>Donneur de Capacités</option></select><br />
+<center>Génération <select id="gen"><option></option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option></select> Type d'apprentissage <select id="learnsetType" onchange="toggleOptions(this.value !== '')"><option></option><option>Reproduction</option><option>Donneur de Capacités</option></select><br />
 <span id="additionalOptions" style="display:none"><input type="radio" name="learningWay" id="wikicode" onclick="releaseInput()" /> Wikicode traditionnel <input id="template" type="radio" name="learningWay" onclick="releaseInput()" /> Le wikitexte utilise des modèles <input type="radio" id="noLearn" name="learningWay" /> N'apprend aucune capacité par ce biais<br /></span>
 Couleur de type <select id="Type"><option></option><option>Feu</option><option>Eau</option><option>Plante</option><option>Électrique</option><option>Psy</option><option>Dragon</option><option>Poison</option><option>Vol</option><option>Normal</option><option>Spectre</option><option>Ténèbres</option><option>Insecte</option><option>Roche</option><option>Sol</option><option>Glace</option><option>Combat</option><option>Fée</option><option>Acier</option></select> <button onclick="transform()">Transformer</button></center><br />
 Wikitexte de sortie <br />
 <textarea id="output" readonly cols=80 rows=20></textarea>
+
+<center><b><font style="font-size:20px; color:red">Remarque importante : Ne pas inclure les en-têtes ni les pieds. Copier-coller le contenu uniquement.</font></b></center>
+<footer>Copyright <a href="http://www.pokepedia.fr/Utilisateur:N_tonio36">N_tonio36</a> &copy; 2017-<span id="currentyear">2017</span> - Tous droits réservés.<br />
+<small><p style="text-align:right; padding-right:20px;"><a href="http://www.pokepedia.fr/Discussion_utilisateur:N_tonio36">Service après-vente</a> -- <a href="https://github.com/Ntonio36/wikicode-vers-module">Répertoire GitHub</a></p></small></footer>
 <script src="./source.js"></script>
 <script src="./Script.js"></script>
 </body>
