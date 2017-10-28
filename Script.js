@@ -1,4 +1,4 @@
-﻿function transform(){
+function transform(){
 	var finalWikitext = "";
 	var objectif = document.getElementById("learnsetType").value;
 	var type = document.getElementById("Type").value;
@@ -46,7 +46,7 @@
 						var moveName = moveSections[0];
 						var parents_natural = moveSections[4];
 						var parents_chain = moveSections[5];
-						moveName = moveName.remove("|").remove("[[").remove("]]").remove(/.{1,}\|/);
+						moveName = moveName.remove("|").remove(/.{1,}\|/).remove("[[").remove("]]");
 						parents_chain = parents_chain.remove(/\{\{miniature\|/g).split("}}");
 						parents_chain.splice(parents_chain.length-1,1);
 						parents_natural = parents_natural.remove(/\{\{miniature\|/g).split("}}");
@@ -92,7 +92,7 @@
 	// GG Tonio
 }
 
-function toggleTemplate(condition){
+function toggleOptions(condition){
 		if(condition){
 			document.getElementById("additionalOptions").style.display = "inline";
 		}
