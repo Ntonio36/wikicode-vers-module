@@ -81,7 +81,7 @@ function transform(){
 						var moveName = separateElements[0];
 						var cost = separateElements[separateElements.length-1];
 						mapSpot = mapSpot.remove("| ");
-						moveName = moveName.remove("|").remove("[[").remove(/.{1,}\|/).remove("]]");
+						moveName = moveName.remove("| ").remove("[[").remove(/.{1,}\|/).remove("]]");
 						finalWikitext += moveName + "/ "+mapSpot+" / "+cost+"\n";
 					}
 				}
