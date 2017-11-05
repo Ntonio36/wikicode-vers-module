@@ -79,10 +79,14 @@ function transform(){
 						var separateElements = line.split("||");
 						var mapSpot = separateElements[2];
 						var moveName = separateElements[0];
-						var cost = separateElements[separateElements.length-1];
+						var cost = separateElements[separateElements.length-1].toLowerCase();
 						mapSpot = mapSpot.remove("| ");
+						if(cost.indexOf("pco") != -1){
+							cost = Number(cost.match(/[0-9]+/));
+							
+						}
 						moveName = moveName.remove("| ").remove("[[").remove(/.{1,}\|/).remove("]]");
-						finalWikitext += moveName + "/ "+mapSpot+" / "+cost+"\n";
+						finalWikitext += moveName + (mapSpot[0] == " "?"/"+mapSpot:"/ "+mapSpot)+" / "+cost+"\n";
 					}
 				}
 				finalWikitext += "}}";
