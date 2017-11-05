@@ -70,6 +70,7 @@ function transform(){
 				finalWikitext += "Aucune}}";
 			}
 			else {
+				finalWikitext += "\n";
 				var text_rows = text.split("\n");
 				for(i = 0; i < text_rows.length; i++){
 					if(text_rows[i] == "|-") continue;
