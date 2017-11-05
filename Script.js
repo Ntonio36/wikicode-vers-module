@@ -10,12 +10,12 @@ function transform(){
 			finalWikitext = "{{#invoke:Apprentissage|reproduction|génération="+generation+"|type="+type+"|Aucune}}";
 		}
 		else {
-			finalWikitext = "{{#invoke:Apprentissage|reproduction|génération="+generation+"|type="+type+"|";
+			finalWikitext = "{{#invoke:Apprentissage|reproduction|génération="+generation+"|type="+type+"|\n";
 			var isTemplate = document.getElementById("template").checked;
 			if(isTemplate){
 				var text_templateParts = text.split("\n");
 				for(i = 0; i < text_templateParts.length; i+=4){
-				if(text_templateParts[i] == "}}") continue;
+				if(text_templateParts[i] == "}}" || text_templateParts[i].indexOf("Haut") != -1 || text_templateParts[i].indexOf("génération") != -1) continue;
 					else {
 						var moveName = text_templateParts[i].remove(/.{1,}\|/);
 						var parents_natural = text_templateParts[i+1]?text_templateParts[i+1].remove("| ").remove(/\{\{miniature\|/g).split("}}").customFilter(""):false;
@@ -78,7 +78,7 @@ function transform(){
 						var separateElements = line.split("||");
 						var mapSpot = separateElements[0];
 						var moveName = separateElements[1];
-						var cost = separateElements[7].remove(" PCo").remove(" [[PCo]]");
+						var cost = separateElements[separateElements.length-1].remove(" PCo").remove(" [[PCo]]");
 						mapSpot = mapSpot.remove("| ");
 						moveName = moveName.remove("|").remove("[[").remove(/.{1,}\|/).remove("]]");
 						finalWikitext += moveName + "/ "+mapSpot+" / "+Number(cost)+"\n";
