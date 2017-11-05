@@ -76,14 +76,15 @@ function transform(){
 					else {
 						var line = text_rows[i];
 						var separateElements = line.split("||");
-						var mapSpot = separateElements[0];
-						var moveName = separateElements[1];
+						var mapSpot = separateElements[2];
+						var moveName = separateElements[0];
 						var cost = separateElements[separateElements.length-1];
 						mapSpot = mapSpot.remove("| ");
 						moveName = moveName.remove("|").remove("[[").remove(/.{1,}\|/).remove("]]");
 						finalWikitext += moveName + "/ "+mapSpot+" / "+cost+"\n";
 					}
 				}
+				finalWikitext += "}}";
 			}
 		break;
 		default : "";
