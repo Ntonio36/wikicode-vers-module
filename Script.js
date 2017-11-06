@@ -91,7 +91,7 @@ function transform(){
 							cost = Number(cost.match(/[0-9]+/));
 						}
 						moveName = moveName.remove("| ").remove("[[").remove(/.{1,}\|/).remove("]]");
-						finalWikitext += moveName + (mapSpot[0] == " "?"/"+mapSpot:"/ "+mapSpot)+(cost?" / "+cost:"")+"\n";
+						finalWikitext += moveName + (mapSpot[0] == " "?"/"+mapSpot:"/ "+mapSpot)+(Number(cost)?" / "+cost:"")+"\n";
 					}
 				}
 				finalWikitext += "}}";
