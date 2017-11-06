@@ -17,7 +17,7 @@ function transform(){
 				for(i = 0; i < text_templateParts.length; i+=4){
 				if(text_templateParts[i] == "}}" || text_templateParts[i].indexOf("Haut") != -1 || text_templateParts[i].indexOf("génération") != -1) continue;
 					else {
-						var moveName = text_templateParts[i].remove(/.{1,}\|\s/);
+						var moveName = text_templateParts[i].remove(/\|.{1,}(\||)\s/);
 						var parents_natural = text_templateParts[i+1]?text_templateParts[i+1].remove("| ").remove(/\{\{miniature\|/g).split("}}"):false;
 						var parents_chain = text_templateParts[i+2]?text_templateParts[i+2].remove("| ").remove(/\{\{miniature\|/g).split("}}"):undefined;
 						if(parents_natural){
@@ -52,7 +52,7 @@ function transform(){
 						var moveName = moveSections[0];
 						var parents_natural = moveSections[4];
 						var parents_chain = moveSections[5];
-						moveName = moveName.remove("| ").remove(/.{1,}\|/).remove("[[").remove("]]");
+						moveName = moveName.remove(/\|(\s|)/).remove(/.{1,}\|/).remove("[[").remove("]]");
 						parents_chain = parents_chain.remove(/\{\{miniature\|/g).split("}}");
 						parents_chain.splice(parents_chain.length-1,1);
 						parents_natural = parents_natural.remove(/\{\{miniature\|/g).split("}}");
