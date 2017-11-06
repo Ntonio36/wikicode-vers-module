@@ -66,7 +66,7 @@ function transform(){
 						finalWikitext += moveName+(parents_natural.toString()!=""?"/ "+naturalParentsArray.join(", ") +" /":"//")+(parents_chain.toString() != ""?" "+chainParentsArray.join(", "):"")+"\n";
 					}
 				}
-				finalWikitext += "\n}}";
+				finalWikitext += "}}";
 			}
 		}
 		break;
