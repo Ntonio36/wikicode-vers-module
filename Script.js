@@ -50,8 +50,8 @@ function transform(){
 					else {
 						var moveSections = text_rows[b].split("||");
 						var moveName = moveSections[0];
-						var parents_natural = moveSections[4];
-						var parents_chain = moveSections[5];
+						var parents_natural = moveSections[moveSections.length-2];
+						var parents_chain = moveSections[moveSections.length-1];
 						moveName = moveName.remove(/\|(\s|)/).remove(/.{1,}\|/).remove("[[").remove("]]");
 						parents_chain = parents_chain.remove(/\{\{miniature\|/g).split("}}");
 						parents_chain.splice(parents_chain.length-1,1);
@@ -63,7 +63,7 @@ function transform(){
 						var naturalParentsArray = parents_natural.map(function(num){
 							return megaArray[num-1];
 						});
-						finalWikitext += moveName+(parents_natural.toString()!=""?"/ "+naturalParentsArray.join(", ") +" /":"//")+(parents_chain.toString() != ""?" "+chainParentsArray.join(", "):"")+"\n";
+						finalWikitext += moveName+(moveName[moveName.length-1] == " "?"":" ")+(parents_natural.toString()!=""?"/ "+naturalParentsArray.join(", ") +" /":"//")+(parents_chain.toString().replace(", , ",", ") != ""?" "+chainParentsArray.join(", "):"")+"\n";
 					}
 				}
 				finalWikitext += "}}";
