@@ -57,11 +57,17 @@ function transform(){
 						parents_chain.splice(parents_chain.length-1,1);
 						parents_natural = parents_natural.remove(/\{\{miniature\|/g).split("}}");
 						parents_natural.splice(parents_natural.length-1,1); //maudit ""
+						var i = 0;
 						var chainParentsArray = parents_chain.map(function(num){
-							return megaArray[num-1];
+							var a = i;
+							i++;
+							return (parents_chain[a] == num && num.indexOf("a") != -1?megaArray[(num.remove("a"))-1] + " forme Alola":megaArray[num-1]);
 						});
+						i = 0;
 						var naturalParentsArray = parents_natural.map(function(num){
-							return megaArray[num-1];
+							var a = i;
+							i++;
+							return (parents_natural[a] == num && num.indexOf("a") != -1?megaArray[(num.remove("a"))-1] + " forme Alola":megaArray[num-1]);
 						});
 						finalWikitext += moveName+(moveName[moveName.length-1] == " "?"":" ")+(parents_natural.toString()!=""?"/ "+naturalParentsArray.join(", ") +" /":"//")+(parents_chain.toString().replace(", , ",", ") != ""?" "+chainParentsArray.join(", "):"")+"\n";
 					}
