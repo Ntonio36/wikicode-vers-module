@@ -63,7 +63,7 @@ function transform(){
 						var naturalParentsArray = parents_natural.map(function(num){
 							return megaArray[num-1];
 						});
-						finalWikitext += "\n" + moveName+(parents_natural.toString()!=""?"/ "+naturalParentsArray.join(", ") +" /":"//")+(parents_chain.toString() != ""?" "+chainParentsArray.join(", "):"");
+						finalWikitext += moveName+(parents_natural.toString()!=""?"/ "+naturalParentsArray.join(", ") +" /":"//")+(parents_chain.toString() != ""?" "+chainParentsArray.join(", "):"")+"\n";
 					}
 				}
 				finalWikitext += "\n}}";
