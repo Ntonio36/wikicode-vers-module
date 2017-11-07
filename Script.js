@@ -27,6 +27,7 @@ function transform(){
 						parentsChain = splitted[2].split(/\{\{miniature\|/g);
 						parentsChain[0].indexOf("|") != -1?parentsChain.splice(0,1):"Say hi again!";
 					}
+					
 					var parentsNaturalNames = parentsNatural.map(function(dexNum){
 						var name = (dexNum.indexOf("a") !=-1?megaArray[Number(dexNum.remove("a}}"))-1]:megaArray[dexNum.remove("}}")-1]);
 						return name;
@@ -89,11 +90,24 @@ function transform(){
 						var moveName = separateElements[0];
 						var cost = separateElements[separateElements.length-1].toLowerCase();
 						mapSpot = mapSpot.remove("| ");
+						var quantity = 0;
+						var shardColor = "";
+						var shardSentence = "";
 						if(cost.indexOf("pco") != -1){
 							cost = Number(cost.match(/[0-9]+/));
 						}
+						else if(cost.indexOf("tesson") != -1){
+							quantity = Number(cost.match(/[0-9]{1,2}/));
+							var wordSeparator = cost.split(/\b/g);
+							cost = 0;
+							shardColor = wordSeparator[wordSeparator.indexOf("tesson")+2];
+							if(quantity > 1){
+								shardSentence = "tesson " + shardColor;
+								shardSentence = shardSentence.turnToPlural();
+							}
+						}
 						moveName = moveName.remove("| ").remove("[[").remove(/.{1,}\|/).remove("]]");
-						finalWikitext += moveName + (mapSpot[0] == " "?"/"+mapSpot:"/ "+mapSpot)+(Number(cost)?" / "+cost:"")+"\n";
+						finalWikitext += moveName + (mapSpot[0] == " "?"/"+ mapSpot :"/ "+ mapSpot) +(Number(cost) || Number(quantity)?"/ "+(cost || quantity)+ " ":"")+(quantity?"/ "+shardSentence:"")+"\n";
 					}
 				}
 				finalWikitext += "}}";
@@ -132,7 +146,15 @@ document.getElementById("noLearn").onclick = function(){
 		document.getElementById("input").disabled = "disabled";
 	}
 };
-
 function releaseInput(){
 	document.getElementById("input").disabled = "";
 }
+
+String.prototype.turnToPlural = function(){
+	var words = this.split(/\b/g);
+	words.splice(words.indexOf(" "),1);
+	var pluralWords = words.map(function(word){
+		return word + "s";
+	});
+	return pluralWords.join(" ");
+};
