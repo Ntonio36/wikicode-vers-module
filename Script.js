@@ -13,33 +13,29 @@ function transform(){
 			finalWikitext = "{{#invoke:Apprentissage|reproduction|génération="+generation+"|type="+type+"|\n";
 			var isTemplate = document.getElementById("template").checked;
 			if(isTemplate){
-				var text_templateParts = text.split("\n");
-				for(i = 0; i < text_templateParts.length; i+=4){
-				if(text_templateParts[i] == "}}" || text_templateParts[i].indexOf("Haut") != -1 || text_templateParts[i].indexOf("génération") != -1) continue;
-					else {
-						var moveName = text_templateParts[i].remove(/\|.{1,}(\||)\s/);
-						var parents_natural = text_templateParts[i+1]?text_templateParts[i+1].remove("| ").remove(/\{\{miniature\|/g).split("}}"):false;
-						var parents_chain = text_templateParts[i+2]?text_templateParts[i+2].remove("| ").remove(/\{\{miniature\|/g).split("}}"):undefined;
-						if(parents_natural){
-							while(parents_natural.indexOf("") != -1){
-								parents_natural.splice(parents_natural.indexOf(""),1);
-							}
-							var pokéNames_natural = parents_natural.map(function(num){
-								return megaArray[num-1];
-							});
-						}
-						else continue;
-						if(parents_chain){
-							while(parents_chain.indexOf("") != -1){
-								parents_chain.splice(parents_chain.indexOf(""),1);
-							}
-							var pokéNames_chain = parents_chain.map(function(num){
-								return megaArray[num-1];
-							});
-						}
-						else continue;
-						pokéNames_chain && pokéNames_natural?finalWikitext += moveName + " / " + pokéNames_natural.join(", ") + " / " + pokéNames_chain.join(", ")+"\n":"";
+				var parentsNatural = [];
+				var parentsChain = [];
+				var templateTextParts = text.split(/\n\}\}\n/g);
+				for(i = 0; i < templateTextParts.length; i++){
+					var splitted = templateTextParts[i].split("\n");
+					var moveName = splitted[0].remove(/.{1,}\|/g);
+					if(splitted[1].indexOf("miniature") != -1){
+						parentsNatural = splitted[1].split(/\{\{miniature\|/g);
+						parentsNatural[0].indexOf("|") != -1?parentsNatural.splice(0,1):"Say hi !";
 					}
+					if(splitted[2].indexOf("miniature") != -1){
+						parentsChain = splitted[2].split(/\{\{miniature\|/g);
+						parentsChain[0].indexOf("|") != -1?parentsChain.splice(0,1):"Say hi again!";
+					}
+					var parentsNaturalNames = parentsNatural.map(function(dexNum){
+						var name = (dexNum.indexOf("a") !=-1?megaArray[Number(dexNum.remove("a}}"))-1]:megaArray[dexNum.remove("}}")-1]);
+						return name;
+					});
+					var parentsChainNames = parentsChain.map(function(dexNum){
+						var name = (dexNum.indexOf("a") !=-1?megaArray[Number(dexNum.remove("a}}"))-1]:megaArray[dexNum.remove("}}")-1]);
+						return name;
+					});
+					finalWikitext += moveName + ((parentsNaturalNames || parentsChainNames)?" /" + (parentsNaturalNames?" " + parentsNaturalNames.join(", "):"") + (parentsChainNames?" / " + parentsChainNames.join(", "):""):"") + "\n";
 				}
 				finalWikitext += "}}";
 			}
@@ -136,6 +132,7 @@ document.getElementById("noLearn").onclick = function(){
 		document.getElementById("input").disabled = "disabled";
 	}
 };
+
 function releaseInput(){
 	document.getElementById("input").disabled = "";
 }
