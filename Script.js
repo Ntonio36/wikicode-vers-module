@@ -66,7 +66,8 @@ function transform(){
 							i++;
 							return (parents_natural[a] == num && num.indexOf("a") != -1?megaArray[(num.remove("a"))-1] + " forme Alola":megaArray[num-1]);
 						});
-						finalWikitext += moveName+(moveName[moveName.length-1] == " "?"":" ")+(parents_natural.toString()!=""?"/ "+naturalParentsArray.join(", ") +(parentsChain?" /":""):"//")+(parents_chain.toString().replace(", , ",", ") != ""?" "+chainParentsArray.join(", "):"")+"\n";
+						
+						finalWikitext += (naturalParentsArray.length || chainParentsArray.length ? moveName.trimLeft().trimRight() + (naturalParentsArray.length || chainParentsArray.length ? " /" + (naturalParentsArray.length ? " " + naturalParentsArray.join(", ") : "/" + (chainParentsArray.length ? " " + chainParentsArray.join(", ") : "")) : "") + "\n" : "");
 					}
 				}
 				finalWikitext += "}}";
