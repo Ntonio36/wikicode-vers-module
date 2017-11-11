@@ -27,7 +27,6 @@ function transform(){
 						parentsChain = splitted[2].split(/\{\{miniature\|/g);
 						parentsChain[0].indexOf("|") != -1?parentsChain.splice(0,1):"Say hi again!";
 					}
-					
 					var parentsNaturalNames = parentsNatural.map(function(dexNum){
 						var name = (dexNum.indexOf("a") !=-1?megaArray[Number(dexNum.remove("a}}"))-1]:megaArray[dexNum.remove("}}")-1]);
 						return name;
@@ -66,8 +65,7 @@ function transform(){
 							i++;
 							return (parents_natural[a] == num && num.indexOf("a") != -1?megaArray[(num.remove("a"))-1] + " forme Alola":megaArray[num-1]);
 						});
-						
-						finalWikitext += (naturalParentsArray.length || chainParentsArray.length ? moveName.trimLeft().trimRight() + (naturalParentsArray.length || chainParentsArray.length ? " /" + (naturalParentsArray.length ? " " + naturalParentsArray.join(", ") : "/" + (chainParentsArray.length ? " " + chainParentsArray.join(", ") : "")) : "") + "\n" : "");
+						finalWikitext += (naturalParentsArray.length || chainParentsArray.length ? moveName.trim() + (naturalParentsArray.length || chainParentsArray.length ? " /" + (naturalParentsArray.length ? " " + naturalParentsArray.join(", ") : "") + (chainParentsArray.length ? (!naturalParentsArray.length ? "/ " : " / ") + chainParentsArray.join(", ") : "") : "") + "\n" : "");
 					}
 				}
 				finalWikitext += "}}";
