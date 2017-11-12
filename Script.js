@@ -17,56 +17,60 @@ function transform(){
 				var parentsChain = [];
 				var templateTextParts = text.split(/\n\}\}\n/g);
 				for(i = 0; i < templateTextParts.length; i++){
-					var splitted = templateTextParts[i].split("\n");
+					var splitted = templateTextParts[i].split("\n|");
 					var moveName = splitted[0].remove(/.{1,}\|/g);
 					if(splitted[1].indexOf("miniature") != -1){
 						parentsNatural = splitted[1].split(/\{\{miniature\|/g);
-						parentsNatural[0].indexOf("|") != -1?parentsNatural.splice(0,1):"Say hi !";
+					}
+					else {
+						parentsNatural = [];
 					}
 					if(splitted[2].indexOf("miniature") != -1){
 						parentsChain = splitted[2].split(/\{\{miniature\|/g);
-						parentsChain[0].indexOf("|") != -1?parentsChain.splice(0,1):"Say hi again!";
 					}
+					else {
+						parentsChain = [];
+					}
+					
 					var parentsNaturalNames = parentsNatural.map(function(dexNum){
-						var name = (dexNum.indexOf("a") !=-1?megaArray[Number(dexNum.remove("a}}"))-1]:megaArray[dexNum.remove("}}")-1]);
+						var name = dexNum.indexOf("a") != -1 ? megaArray[Number(dexNum.remove("a}}"))-1] : megaArray[dexNum.remove("}}")-1];
 						return name;
-					});
+					}).checkExistence();
+					
 					var parentsChainNames = parentsChain.map(function(dexNum){
-						var name = (dexNum.indexOf("a") !=-1?megaArray[Number(dexNum.remove("a}}"))-1]:megaArray[dexNum.remove("}}")-1]);
+						var name = dexNum.indexOf("a") !=-1 ? megaArray[Number(dexNum.remove("a}}"))-1] : megaArray[dexNum.remove("}}")-1];
 						return name;
-					});
-					finalWikitext += moveName + ((parentsNaturalNames || parentsChainNames)?" /" + (parentsNaturalNames?" " + parentsNaturalNames.join(", "):"") + (parentsChainNames?" / " + parentsChainNames.join(", "):""):"") + "\n";
+					}).checkExistence();
+					
+					finalWikitext += (parentsNaturalNames.length || parentsChainNames.length ? moveName + " /" + (parentsNaturalNames.length ?" " + parentsNaturalNames.join(", "):"") + (parentsChainNames.length ? (parentsNatural.length?" / ":"/ ") + parentsChainNames.join(", "):""):"") + "\n";
 				}
 				finalWikitext += "}}";
 			}
 			else {
 				var text_rows = text.split("\n|-\n");
 				for(b = 0; b < text_rows.length; b++){
-					if(text_rows[b] == "|-" || text_rows[b] == "" || text_rows[b] == "|}" || text_rows[b].indexOf("{|") != -1 || text_rows[b].indexOf("!") != -1) continue;
-					else {
-						var moveSections = text_rows[b].split("||");
-						var moveName = moveSections[0];
-						var parents_natural = moveSections[moveSections.length-2];
-						var parents_chain = moveSections[moveSections.length-1];
-						moveName = moveName.remove(/\|(\s|)/).remove(/.{1,}\|/).remove("[[").remove("]]");
-						parents_chain = parents_chain.remove(/\{\{miniature\|/g).split("}}");
-						parents_chain.splice(parents_chain.length-1,1);
-						parents_natural = parents_natural.remove(/\{\{miniature\|/g).split("}}");
-						parents_natural.splice(parents_natural.length-1,1); //maudit ""
-						var i = 0;
-						var chainParentsArray = parents_chain.map(function(num){
-							var a = i;
-							i++;
-							return (parents_chain[a] == num && num.indexOf("a") != -1?megaArray[(num.remove("a"))-1] + " forme Alola":megaArray[num-1]);
-						});
-						i = 0;
-						var naturalParentsArray = parents_natural.map(function(num){
-							var a = i;
-							i++;
-							return (parents_natural[a] == num && num.indexOf("a") != -1?megaArray[(num.remove("a"))-1] + " forme Alola":megaArray[num-1]);
-						});
-						finalWikitext += (naturalParentsArray.length || chainParentsArray.length ? moveName.trim() + (naturalParentsArray.length || chainParentsArray.length ? " /" + (naturalParentsArray.length ? " " + naturalParentsArray.join(", ") : "") + (chainParentsArray.length ? (!naturalParentsArray.length ? "/ " : " / ") + chainParentsArray.join(", ") : "") : "") + "\n" : "");
-					}
+					var moveSections = text_rows[b].split("||");
+					var moveName = moveSections[0];
+					var parents_natural = moveSections[moveSections.length-2];
+					var parents_chain = moveSections[moveSections.length-1];
+					moveName = moveName.remove(/\|(\s|)/).remove(/.{1,}\|/).remove("[[").remove("]]");
+					parents_chain = parents_chain.remove(/\{\{miniature\|/g).split("}}");
+					parents_chain.splice(parents_chain.length-1,1);
+					parents_natural = parents_natural.remove(/\{\{miniature\|/g).split("}}");
+					parents_natural.splice(parents_natural.length-1,1); //maudit ""
+					var i = 0;
+					var chainParentsArray = parents_chain.map(function(num){
+						var a = i;
+						i++;
+						return (parents_chain[a] == num && num.indexOf("a") != -1?megaArray[(num.remove("a"))-1] + " forme Alola":megaArray[num-1]);
+					});
+					i = 0;
+					var naturalParentsArray = parents_natural.map(function(num){
+						var a = i;
+						i++;
+						return (parents_natural[a] == num && num.indexOf("a") != -1?megaArray[(num.remove("a"))-1] + " forme Alola":megaArray[num-1]);
+					});
+					finalWikitext += (naturalParentsArray.length || chainParentsArray.length ? moveName.trim() + (naturalParentsArray.length || chainParentsArray.length ? " /" + (naturalParentsArray.length ? " " + naturalParentsArray.join(", ") : "") + (chainParentsArray.length ? (!naturalParentsArray.length ? "/ " : " / ") + chainParentsArray.join(", ") : "") : "") + "\n" : "");
 				}
 				finalWikitext += "}}";
 			}
@@ -145,15 +149,45 @@ document.getElementById("noLearn").onclick = function(){
 		document.getElementById("input").disabled = "disabled";
 	}
 };
+
 function releaseInput(){
 	document.getElementById("input").disabled = "";
 }
 
 String.prototype.turnToPlural = function(){
 	var words = this.split(/\b/g);
-	words.splice(words.indexOf(" "),1);
+	while(words.indexOf(" ") != -1){
+		words.splice(words.indexOf(" "),1);
+	}
 	var pluralWords = words.map(function(word){
 		return word + "s";
 	});
 	return pluralWords.join(" ");
+};
+
+Array.prototype.checkExistence = function(){
+	var	toBan = [undefined,null,false];
+	for(i = 0; i < 3; i++){
+		if(toBan.indexOf(this[i]) != -1){
+			this.splice(i,1);
+		}
+	}
+	return this;
+}
+
+function checkSixthGen(dom){
+	if(dom.value == 6){
+		document.getElementById("xyORAS").style.display = "inline";
+	}
+	else {
+		document.getElementById("xyORAS").style.display = "none";
+		var inputs = document.getElementById("xyORAS").childNodes;
+		for(i = 0; i < inputs.length; i++){
+			inputs[i].checked = "";
+		}
+	}
+}
+
+String.prototype.filterForORAS = function(){
+	// TODO ; voir Brocélôme/Gén6
 };
