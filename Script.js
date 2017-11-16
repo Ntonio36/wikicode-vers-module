@@ -4,6 +4,9 @@ function transform(){
 	var type = document.getElementById("Type").value;
 	var generation = document.getElementById("gen").value;
 	var text = document.getElementById("input").value;
+	if(generation == 6){
+		var game = document.querySelector("input[name='6thGen']:checked").id;
+	}
 	switch(objectif){
 		case "Reproduction" :
 		if(document.getElementById("noLearn").checked){
@@ -47,17 +50,19 @@ function transform(){
 				finalWikitext += "}}";
 			}
 			else {
-				var text_rows = text.split("\n|-\n");
+				var text_rows = text.split("\n|-\n") || text.split("\n| -\n");
 				for(b = 0; b < text_rows.length; b++){
-					var moveSections = text_rows[b].split("||");
+					var moveSections = text_rows[b].split("\n|") || text_rows[b].split("||");
 					var moveName = moveSections[0];
 					var parents_natural = moveSections[moveSections.length-2];
 					var parents_chain = moveSections[moveSections.length-1];
 					moveName = moveName.remove(/\|(\s|)/).remove(/.{1,}\|/).remove("[[").remove("]]");
 					parents_chain = parents_chain.remove(/\{\{miniature\|/g).split("}}");
-					parents_chain.splice(parents_chain.length-1,1);
+					parents_chain[parents_chain.length-1] == "" ? parents_chain.splice(parents_chain.length-1,1) : "";
 					parents_natural = parents_natural.remove(/\{\{miniature\|/g).split("}}");
-					parents_natural.splice(parents_natural.length-1,1); //maudit ""
+					parents_natural[parents_natural.length-1] == "" ? parents_natural.splice(parents_natural.length-1,1) : "";
+					checkContent(generation, game, parents_natural);
+					checkContent(generation, game, parents_chain);
 					var i = 0;
 					var chainParentsArray = parents_chain.map(function(num){
 						var a = i;
@@ -188,6 +193,13 @@ function checkSixthGen(dom){
 	}
 }
 
-String.prototype.filterForORAS = function(){
-	// TODO ; voir Brocélôme/Gén6
-};
+function checkContent(var1, var2, arr){
+	if(var1 == 6 && var2 == "XY" && arr.indexOf("{{Sup|ROSA") != -1){
+		arr.splice(arr.indexOf("{{Sup|ROSA")-1,2);
+	}
+	else if(var2 == "ROSA" && arr.indexOf("{{Sup|ROSA") != -1){
+		arr.splice(arr.indexOf("{{Sup|ROSA"),1);
+	}
+	var parentsLength = arr.length;
+	arr[parentsLength-1] == "" ? arr.splice(arr.length-1,1) : ""; //maudit ""
+}
