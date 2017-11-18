@@ -61,8 +61,8 @@ function transform(){
 					parents_chain[parents_chain.length-1] == "" ? parents_chain.splice(parents_chain.length-1,1) : "";
 					parents_natural = parents_natural.remove(/\{\{miniature\|/g).split("}}");
 					parents_natural[parents_natural.length-1] == "" ? parents_natural.splice(parents_natural.length-1,1) : "";
-					checkContent(generation, game, parents_natural);
-					checkContent(generation, game, parents_chain);
+					checkContentORAS(generation, game, parents_natural);
+					checkContentORAS(generation, game, parents_chain);
 					var i = 0;
 					var chainParentsArray = parents_chain.map(function(num){
 						var a = i;
@@ -99,23 +99,24 @@ function transform(){
 						var cost = separateElements[separateElements.length-1].toLowerCase();
 						mapSpot = mapSpot.remove("| ");
 						var quantity = 0;
-						var shardColor = "";
-						var shardSentence = "";
 						if(cost.indexOf("pco") != -1){
 							cost = Number(cost.match(/[0-9]+/));
 						}
 						else if(cost.indexOf("tesson") != -1){
-							quantity = Number(cost.match(/[0-9]{1,2}/));
-							var wordSeparator = cost.split(/\b/g);
-							cost = 0;
-							shardColor = wordSeparator[wordSeparator.indexOf("tesson")+2];
-							if(quantity > 1){
-								shardSentence = "tesson " + shardColor;
-								shardSentence = shardSentence.turnToPlural();
+							var quantities = cost.match(/[0-9]{1,2}/g);
+							var colorsWikiText = cost.split(/<small>.+?<\/small>/g);
+							var colors = colorsWikiText.map(function(color){
+								return color.replace(/.{1,} tesson/g,"").trim().replace(".png]]","");
+							}).filter(function(filtered){
+								return filtered != "";
+							});
+							var finalShardText = quantities[0] + " / tessons " + toPlural(colors[0],quantities[0]);
+							for(i = 1; i < colors.length; i++){
+								finalShardText += ", ou " + quantities[i] + (quantities[i] > 1 ?  " tessons " : " tesson ") + toPlural(colors[i],quantities[i]);
 							}
 						}
 						moveName = moveName.remove("| ").remove("[[").remove(/.{1,}\|/).remove("]]");
-						finalWikitext += moveName + (mapSpot[0] == " "?"/"+ mapSpot :"/ "+ mapSpot) +(Number(cost) || Number(quantity)?"/ "+(cost || quantity)+ " ":"")+(quantity?"/ "+shardSentence:"")+"\n";
+						finalWikitext += moveName + (mapSpot[0] == " "?"/"+ mapSpot :"/ "+ mapSpot) +(Number(cost) || Number(quantity)?"/ "+(cost || quantity)+ " ":"")+(quantity?"/ "+finalShardText:"")+"\n";
 					}
 				}
 				finalWikitext += "}}";
@@ -193,7 +194,7 @@ function checkSixthGen(dom){
 	}
 }
 
-function checkContent(var1, var2, arr){
+function checkContentORAS(var1, var2, arr){
 	if(var1 == 6 && var2 == "XY" && arr.indexOf("{{Sup|ROSA") != -1){
 		arr.splice(arr.indexOf("{{Sup|ROSA")-1,2);
 	}
@@ -202,4 +203,11 @@ function checkContent(var1, var2, arr){
 	}
 	var parentsLength = arr.length;
 	arr[parentsLength-1] == "" ? arr.splice(arr.length-1,1) : ""; //maudit ""
+}
+
+function toPlural(text,number){
+	if(number > 1){
+		return text + "s";
+	}
+	else return text;
 }
