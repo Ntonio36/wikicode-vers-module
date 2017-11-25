@@ -50,13 +50,20 @@ function transform(){
 				finalWikitext += "}}";
 			}
 			else {
-				var text_rows = text.split("\n|-\n") || text.split("\n| -\n");
+				var text_rows = text.split("\n|-\n");
+				if(text_rows.length == 1){
+					text_rows = text.split("\n| -\n");
+				}
 				for(b = 0; b < text_rows.length; b++){
-					var moveSections = text_rows[b].split("\n|") || text_rows[b].split("||");
-					var moveName = moveSections[0];
+					var moveSections = text_rows[b].split("\n|");
+					if(moveSections.length == 1){
+						moveSections = text_rows[b].split("||");
+					}
+					var moveName = moveSections[0].trim();
 					var parents_natural = moveSections[moveSections.length-2];
+					console.log(moveSections);
 					var parents_chain = moveSections[moveSections.length-1];
-					moveName = moveName.remove(/\|(\s|)/).remove(/.{1,}\|/).remove("[[").remove("]]");
+					moveName = moveName.remove(/\|/).remove(/.{1,}\|/).remove("[[").remove("]]");
 					parents_chain = parents_chain.remove(/\{\{miniature\|/g).split("}}");
 					parents_chain[parents_chain.length-1] == "" ? parents_chain.splice(parents_chain.length-1,1) : "";
 					parents_natural = parents_natural.remove(/\{\{miniature\|/g).split("}}");
