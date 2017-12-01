@@ -1,4 +1,5 @@
-﻿var megaArray = ["Bulbizarre", "Herbizarre", "Florizarre", "Salamèche", "Reptincel",
+var megaArray = [
+"Bulbizarre", "Herbizarre", "Florizarre", "Salamèche", "Reptincel",
 "Dracaufeu", "Carapuce", "Carabaffe", "Tortank", "Chenipan",
 "Chrysacier", "Papilusion", "Aspicot", "Coconfort", "Dardargnan",
 "Roucool", "Roucoups", "Roucarnage", "Rattata", "Rattatac",
@@ -18,7 +19,7 @@
 "Otaria", "Lamantine", "Tadmorv", "Grotadmorv", "Kokiyas",
 "Crustabri", "Fantominus", "Spectrum", "Ectoplasma", "Onix",
 "Soporifik", "Hypnomade", "Krabby", "Krabboss", "Voltorbe",
-"Électrode", "Nœunœuf", "Noadkoko", "Osselait", "Ossatueur",
+"Électrode", "Noeunoeuf", "Noadkoko", "Osselait", "Ossatueur",
 "Kicklee", "Tygnon", "Excelangue", "Smogo", "Smogogo",
 "Rhinocorne", "Rhinoféros", "Leveinard", "Saquedeneu", "Kangourex",
 "Hypotrempe", "Hypocéan", "Poissirène", "Poissoroy", "Stari",
@@ -157,4 +158,5 @@
 "Écaïd", "Ékaïser", "Tokorico", "Tokopiyon", "Tokotoro",
 "Tokopisco", "Cosmog", "Cosmovum", "Solgaleo", "Lunala",
 "Zéroïd", "Mouscoto", "Cancrelove", "Câblifère", "Bamboiselle",
-"Katagami", "Engloutyran", "Necrozma", "Magearna", "Marshadow"];
+"Katagami", "Engloutyran", "Necrozma", "Magearna", "Marshadow",
+"Vémini", "Mandrillon", "Ama-Ama", "Pierroteknik"];
