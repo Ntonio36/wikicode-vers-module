@@ -1,92 +1,102 @@
-function transform(){
+﻿function transform(){
 	var finalWikitext = "";
 	var objectif = document.getElementById("learnsetType").value;
 	var type = document.getElementById("Type").value;
 	var generation = document.getElementById("gen").value;
 	var text = document.getElementById("input").value;
 	if(generation == 6){
-		var game = document.querySelector("input[name='6thGen']:checked").id;
+		var game = document.querySelector("input[name='6thGen']:checked").id; // XY ou ROSA ?
 	}
 	switch(objectif){
 		case "Reproduction" :
-		if(document.getElementById("noLearn").checked){
-			finalWikitext = "{{#invoke:Apprentissage|reproduction|génération="+generation+"|type="+type+"|Aucune}}";
-		}
-		else {
-			finalWikitext = "{{#invoke:Apprentissage|reproduction|génération="+generation+"|type="+type+"|\n";
-			var isTemplate = document.getElementById("template").checked;
-			if(isTemplate){
-				var parentsNatural = [];
-				var parentsChain = [];
-				var templateTextParts = text.split(/\n\}\}\n/g);
-				for(i = 0; i < templateTextParts.length; i++){
-					var splitted = templateTextParts[i].split("\n|");
-					var moveName = splitted[0].remove(/.{1,}\|/g);
-					if(splitted[1].indexOf("miniature") != -1){
-						parentsNatural = splitted[1].split(/\{\{miniature\|/g);
-					}
-					else {
-						parentsNatural = [];
-					}
-					if(splitted[2].indexOf("miniature") != -1){
-						parentsChain = splitted[2].split(/\{\{miniature\|/g);
-					}
-					else {
-						parentsChain = [];
-					}
-					
-					var parentsNaturalNames = parentsNatural.map(function(dexNum){
-						var name = dexNum.indexOf("a") != -1 ? megaArray[Number(dexNum.remove("a}}"))-1] : megaArray[dexNum.remove("}}")-1];
-						return name;
-					}).checkExistence();
-					
-					var parentsChainNames = parentsChain.map(function(dexNum){
-						var name = dexNum.indexOf("a") !=-1 ? megaArray[Number(dexNum.remove("a}}"))-1] : megaArray[dexNum.remove("}}")-1];
-						return name;
-					}).checkExistence();
-					
-					finalWikitext += (parentsNaturalNames.length || parentsChainNames.length ? moveName + " /" + (parentsNaturalNames.length ?" " + parentsNaturalNames.join(", "):"") + (parentsChainNames.length ? (parentsNatural.length?" / ":"/ ") + parentsChainNames.join(", "):""):"") + "\n";
-				}
-				finalWikitext += "}}";
+			if(document.getElementById("noLearn").checked){
+				finalWikitext = "{{#invoke:Apprentissage|reproduction|génération="+generation+"|type="+type+"|Aucune}}";
 			}
 			else {
-				var text_rows = text.split("\n|-\n");
-				if(text_rows.length == 1){
-					text_rows = text.split("\n| -\n");
-				}
-				for(b = 0; b < text_rows.length; b++){
-					var moveSections = text_rows[b].split("\n|");
-					if(moveSections.length == 1){
-						moveSections = text_rows[b].split("||");
+				finalWikitext = "{{#invoke:Apprentissage|reproduction|génération="+generation+"|type="+type+"|\n";
+				var isTemplate = document.getElementById("template").checked;
+				var naturalParents = [];
+				var chainParents = [];
+				if(isTemplate){
+					var templateTextBlocks = text.split(/\n\}\}\n/mg);
+					console.log(templateTextBlocks);
+					// Un modèle se finit forcément par }} ET laisse une nouvelle ligne derrière lui
+					for(i = 0; i < templateTextBlocks.length; i++){
+						var templateArguments = templateTextBlocks[i].split("\n|");
+						var moveName = templateArguments[0].remove(/.{1,}\|/g).trim();
+						if(templateArguments[1].indexOf("miniature") != -1){
+							naturalParents = templateArguments[1].match(/\d{3}([a-z]|)/g);
+						}
+						if(templateArguments[2].indexOf("miniature") != -1){
+							chainParents = templateArguments[2].match(/\d{3}([a-z]|)/g);
+						}
+						if(naturalParents){
+							var naturalParentsNames = naturalParents.convertToNames();
+						}
+						if(chainParents){
+							var chainParentsNames = chainParents.convertToNames();
+						}
+						// Si la regex a trouvé de quoi faire dans les deux textes de parents
+						
+						if(naturalParentsNames || chainParentsNames){
+							finalWikitext += moveName;
+							if(naturalParentsNames.length){ // Distinguer entre l'EXISTENCE de ces tableaux et CE QU'ILS CONTIENNENT
+								finalWikitext += " / " + naturalParentsNames.join(", ");
+							}
+							if(chainParentsNames.length){
+								finalWikitext += " / " + (naturalParentsNames.length ? " " : "/ ") + chainParentsNames.join(", ");
+							}
+						}
+						finalWikitext += "\n";
 					}
-					var moveName = moveSections[0].trim();
-					var parents_natural = moveSections[moveSections.length-2];
-					console.log(moveSections);
-					var parents_chain = moveSections[moveSections.length-1];
-					moveName = moveName.remove(/\|/).remove(/.{1,}\|/).remove("[[").remove("]]");
-					parents_chain = parents_chain.remove(/\{\{miniature\|/g).split("}}");
-					parents_chain[parents_chain.length-1] == "" ? parents_chain.splice(parents_chain.length-1,1) : "";
-					parents_natural = parents_natural.remove(/\{\{miniature\|/g).split("}}");
-					parents_natural[parents_natural.length-1] == "" ? parents_natural.splice(parents_natural.length-1,1) : "";
-					checkContentORAS(generation, game, parents_natural);
-					checkContentORAS(generation, game, parents_chain);
-					var i = 0;
-					var chainParentsArray = parents_chain.map(function(num){
-						var a = i;
-						i++;
-						return (parents_chain[a] == num && num.indexOf("a") != -1?megaArray[(num.remove("a"))-1] + " forme Alola":megaArray[num-1]);
-					});
-					i = 0;
-					var naturalParentsArray = parents_natural.map(function(num){
-						var a = i;
-						i++;
-						return (parents_natural[a] == num && num.indexOf("a") != -1?megaArray[(num.remove("a"))-1] + " forme Alola":megaArray[num-1]);
-					});
-					finalWikitext += (naturalParentsArray.length || chainParentsArray.length ? moveName.trim() + (naturalParentsArray.length || chainParentsArray.length ? " /" + (naturalParentsArray.length ? " " + naturalParentsArray.join(", ") : "") + (chainParentsArray.length ? (!naturalParentsArray.length ? "/ " : " / ") + chainParentsArray.join(", ") : "") : "") + "\n" : "");
+					finalWikitext += "}}";
 				}
-				finalWikitext += "}}";
+				else {
+					var text_rows = text.split("\n|-\n");
+					if(text_rows.length == 1){
+						text_rows = text.split("\n| -\n");
+					}
+					for(b = 0; b < text_rows.length; b++){
+						var rawMoveSections = text_rows[b].split("\n|");
+						if(rawMoveSections.length == 1){
+							rawMoveSections = text_rows[b].split("||");
+						}
+						var moveSections = rawMoveSections.toString().remove(/\n/g).split(",");
+						// Merci à tous ceux qui ont intoxiqué les tableaux en leurs mettant des retours de ligne dans la même entrée de tableau
+						var moveName = moveSections[0].trim();
+						var naturalParents = moveSections[moveSections.length-2]; // Avant-derniers de leur liste (repro directe)
+
+						var chainParents = moveSections[moveSections.length-1];	
+						// Vous l'aurez deviné, ils sont les derniers (repro par chaîne)		
+						moveName = moveName.remove("|").remove(/.{1,}\|/).remove("[[").remove("]]").trim();
+
+						naturalParents = naturalParents.match(/\{\{.+?\}\}/g);
+						chainParents = chainParents.match(/\{\{.+?\}\}/g);
+						chainParents = checkORAS_content(game, chainParents);
+						if(naturalParents){
+							naturalParents = naturalParents.toString().match(/\d{3}([a-z]|)/g);
+							naturalParents = checkORAS_content(game, naturalParents);
+							var naturalParentsNames = naturalParents.convertToNames();
+						}
+						if(chainParents){
+							chainParents = chainParents.toString().match(/\d{3}([a-z]|)/g);
+							var chainParentsNames = chainParents.convertToNames();	
+						}
+						
+						if(naturalParentsNames.length || chainParentsNames.length){
+							finalWikitext += moveName;
+							if(naturalParentsNames.length){
+								finalWikitext += " / " + naturalParentsNames.join(", ");
+							}
+							if(chainParentsNames.length){
+								finalWikitext += " " + (naturalParentsNames.length ? "" : "/") + "/ " + chainParentsNames.join(", ");
+							}
+							finalWikitext += "\n";
+						}
+					}
+					finalWikitext += "}}";
+				}
 			}
-		}
 		break;
 		case "Donneur de Capacités" :
 			finalWikitext = "{{#invoke:Apprentissage|donneur|génération="+generation+"|type="+type+"|";
@@ -167,27 +177,6 @@ function releaseInput(){
 	document.getElementById("input").disabled = "";
 }
 
-String.prototype.turnToPlural = function(){
-	var words = this.split(/\b/g);
-	while(words.indexOf(" ") != -1){
-		words.splice(words.indexOf(" "),1);
-	}
-	var pluralWords = words.map(function(word){
-		return word + "s";
-	});
-	return pluralWords.join(" ");
-};
-
-Array.prototype.checkExistence = function(){
-	var	toBan = [undefined,null,false];
-	for(i = 0; i < 3; i++){
-		if(toBan.indexOf(this[i]) != -1){
-			this.splice(i,1);
-		}
-	}
-	return this;
-}
-
 function checkSixthGen(dom){
 	if(dom.value == 6){
 		document.getElementById("xyORAS").style.display = "inline";
@@ -201,15 +190,29 @@ function checkSixthGen(dom){
 	}
 }
 
-function checkContentORAS(var1, var2, arr){
-	if(var1 == 6 && var2 == "XY" && arr.indexOf("{{Sup|ROSA") != -1){
-		arr.splice(arr.indexOf("{{Sup|ROSA")-1,2);
+function checkORAS_content(game, targetArray){
+	var holder = [];
+	var isSixthGeneration = document.getElementById("gen").value == 6;
+	if(isSixthGeneration && game == "XY" && targetArray.indexOf("Sup|ROSA") != -1){
+		holder = targetArray.filter(function(filtered){
+			var currentIndex = targetArray.indexOf(filtered);
+			if(targetArray[currentIndex+1] != "Sup|ROSA" || targetArray[currentIndex] != "Sup|ROSA"){
+				return filtered;
+			}
+		});
 	}
-	else if(var2 == "ROSA" && arr.indexOf("{{Sup|ROSA") != -1){
-		arr.splice(arr.indexOf("{{Sup|ROSA"),1);
+	else if(isSixthGeneration && game == "ROSA" && targetArray.indexOf("Sup|ROSA") != -1){
+		holder = targetArray.filter(function(filtered){
+			var currentIndex = targetArray.indexOf(filtered);
+			if(targetArray[currentIndex] != "Sup|ROSA"){
+				return filtered;
+			}
+		});
 	}
-	var parentsLength = arr.length;
-	arr[parentsLength-1] == "" ? arr.splice(arr.length-1,1) : ""; //maudit ""
+	else {
+		holder = targetArray;
+	}
+	return holder;
 }
 
 function toPlural(text,number){
@@ -217,4 +220,15 @@ function toPlural(text,number){
 		return text + "s";
 	}
 	else return text;
+}
+
+Array.prototype.convertToNames = function(){
+	return this.map(function(N_DexNum){
+		if(N_DexNum.indexOf("a") != -1){
+			return megaArray[(N_DexNum.remove("a"))-1] + " forme Alola";
+		}
+		else {
+			return megaArray[N_DexNum-1];
+		}
+	});
 }
