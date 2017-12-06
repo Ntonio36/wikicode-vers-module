@@ -19,8 +19,8 @@
 				var chainParents = [];
 				if(isTemplate){
 					var templateTextBlocks = text.split(/\n\}\}\n/mg);
-					console.log(templateTextBlocks);
-					// Un modèle se finit forcément par }} ET laisse une nouvelle ligne derrière lui
+					// Un modèle se finit forcément par }} ET laisse une nouvelle ligne derrière lui. 
+					// En tous cas, c'est le cas de {{Apprentissage Pokémon}}
 					for(i = 0; i < templateTextBlocks.length; i++){
 						var templateArguments = templateTextBlocks[i].split("\n|");
 						var moveName = templateArguments[0].remove(/.{1,}\|/g).trim();
@@ -62,10 +62,9 @@
 							rawMoveSections = text_rows[b].split("||");
 						}
 						var moveSections = rawMoveSections.toString().remove(/\n/g).split(",");
-						// Merci à tous ceux qui ont intoxiqué les tableaux en leurs mettant des retours de ligne dans la même entrée de tableau
+						// Merci à tous ceux qui ont intoxiqué les tableaux en leurs mettant des retours de ligne alors qu'on n'a pas changé de ligne à travailler, tel que le comprend l'interpréteur wikicode
 						var moveName = moveSections[0].trim();
 						var naturalParents = moveSections[moveSections.length-2]; // Avant-derniers de leur liste (repro directe)
-
 						var chainParents = moveSections[moveSections.length-1];	
 						// Vous l'aurez deviné, ils sont les derniers (repro par chaîne)		
 						moveName = moveName.remove("|").remove(/.{1,}\|/).remove("[[").remove("]]").trim();
@@ -105,35 +104,36 @@
 			}
 			else {
 				finalWikitext += "\n";
-				var text_rows = text.split("\n");
+				var text_rows = text.split("\n|-\n");
 				for(i = 0; i < text_rows.length; i++){
-					if(text_rows[i] == "|-") continue;
-					else {
-						var line = text_rows[i];
-						var separateElements = line.split("||");
-						var mapSpot = separateElements[2];
-						var moveName = separateElements[0];
-						var cost = separateElements[separateElements.length-1].toLowerCase();
-						mapSpot = mapSpot.remove("| ");
-						var quantity = 0;
-						if(cost.indexOf("pco") != -1){
-							cost = Number(cost.match(/[0-9]+/));
-						}
-						else if(cost.indexOf("tesson") != -1){
-							var quantities = cost.match(/[0-9]{1,2}/g);
-							var colorsWikiText = cost.split(/<small>.+?<\/small>/g);
-							var colors = colorsWikiText.map(function(color){
-								return color.replace(/.{1,} tesson/g,"").trim().replace(".png]]","");
-							}).filter(function(filtered){
-								return filtered != "";
-							});
-							var finalShardText = quantities[0] + " / tessons " + toPlural(colors[0],quantities[0]);
-							for(i = 1; i < colors.length; i++){
-								finalShardText += ", ou " + quantities[i] + (quantities[i] > 1 ?  " tessons " : " tesson ") + toPlural(colors[i],quantities[i]);
-							}
-						}
-						moveName = moveName.remove("| ").remove("[[").remove(/.{1,}\|/).remove("]]");
-						finalWikitext += moveName + (mapSpot[0] == " "?"/"+ mapSpot :"/ "+ mapSpot) +(Number(cost) || Number(quantity)?"/ "+(cost || quantity)+ " ":"")+(quantity?"/ "+finalShardText:"")+"\n";
+					var line = text_rows[i];
+					var separateElements = line.split("||");
+					var mapSpot = separateElements[2];
+					var moveName = separateElements[0];
+					var cost = separateElements[separateElements.length-1].toLowerCase();
+					mapSpot = mapSpot.remove("|").trim();
+					var quantity = 0;
+					if(cost.indexOf("pco") != -1){
+						quantity = Number(cost.match(/[0-9]+/));
+					}
+					else if(cost.indexOf("tesson") != -1){
+						var quantities = cost.match(/[0-9]{1,2}/g);
+						var colorsWikiText = cost.split(/<small>.+?<\/small>/g);
+						var colors = colorsWikiText.map(function(color){
+							return color.remove(/.+ tesson/g).remove(/\.[a-z]{3}\]\]/).trim();
+						}).filter(function(filtered){
+							return filtered != "";
+						});
+						var finalShardText = colors.map(function(shardColor){
+							var currentIndex = colors.indexOf(shardColor);
+							return quantities[currentIndex] + " " toPlural(shardColor, quantities[currentIndex]);
+							// 3 tessons rouges, 1 tesson bleu
+						}).join(", ou ");
+						cost = finalShardText;
+					}
+					moveName = moveName.remove("| ").remove(/.+\|/).remove("]]").trim();
+					if(cost){
+						finalWikitext += moveName + " / " + mapSpot + " / " + cost + "\n";
 					}
 				}
 				finalWikitext += "}}";
