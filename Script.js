@@ -108,12 +108,12 @@
 				for(i = 0; i < text_rows.length; i++){
 					var line = text_rows[i];
 					var separateElements = line.split("||");
-					var mapSpot = separateElements[2];
-					var moveName = separateElements[0];
-					var cost = separateElements[separateElements.length-1].toLowerCase();
+					var mapSpot = separateElements[0];
+					var moveName = separateElements[1];
+					var cost = separateElements[separateElements.length-1];
 					mapSpot = mapSpot.remove("|").trim();
 					var quantity = 0;
-					if(cost.indexOf("pco") != -1){
+					if(cost.toLowerString().indexOf("pco") != -1){
 						quantity = Number(cost.match(/[0-9]+/));
 					}
 					else if(cost.indexOf("tesson") != -1){
