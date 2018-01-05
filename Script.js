@@ -126,7 +126,7 @@
 						});
 						var finalShardText = colors.map(function(shardColor){
 							var currentIndex = colors.indexOf(shardColor);
-							return quantities[currentIndex] + " " toPlural(shardColor, quantities[currentIndex]);
+							return quantities[currentIndex] + " " + toPlural(shardColor, quantities[currentIndex]);
 							// 3 tessons rouges, 1 tesson bleu
 						}).join(", ou ");
 						cost = finalShardText;
