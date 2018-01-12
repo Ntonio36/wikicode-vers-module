@@ -113,7 +113,7 @@
 					var cost = separateElements[separateElements.length-1];
 					mapSpot = mapSpot.remove("|").trim();
 					var quantity = 0;
-					if(cost.toLowerString().indexOf("pco") != -1){
+					if(cost.toLowerCase().indexOf("pco") != -1){
 						quantity = Number(cost.match(/[0-9]+/));
 					}
 					else if(cost.indexOf("tesson") != -1){
