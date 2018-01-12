@@ -131,7 +131,7 @@
 						}).join(", ou ");
 						cost = finalShardText;
 					}
-					moveName = moveName.remove("| ").remove(/.+\|/).remove("]]").trim();
+					moveName = moveName.remove("| ").remove(/.+\|/).remove("]]").remove("[[").trim();
 					if(cost){
 						finalWikitext += moveName + " / " + mapSpot + " / " + cost + "\n";
 					}
