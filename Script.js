@@ -68,7 +68,6 @@
 						var chainParents = moveSections[moveSections.length-1];	
 						// Vous l'aurez deviné, ils sont les derniers (repro par chaîne)		
 						moveName = moveName.remove("|").remove(/.{1,}\|/).remove("[[").remove("]]").trim();
-
 						naturalParents = naturalParents.match(/\{\{.+?\}\}/g);
 						chainParents = chainParents.match(/\{\{.+?\}\}/g);
 						chainParents = checkORAS_content(game, chainParents);
@@ -193,7 +192,7 @@ function checkSixthGen(dom){
 function checkORAS_content(game, targetArray){
 	var holder = [];
 	var isSixthGeneration = document.getElementById("gen").value == 6;
-	if(isSixthGeneration && game == "XY" && targetArray.indexOf("Sup|ROSA") != -1){
+	if(isSixthGeneration && game == "XY" && targetArray !== null && targetArray.indexOf("Sup|ROSA") != -1){
 		holder = targetArray.filter(function(filtered){
 			var currentIndex = targetArray.indexOf(filtered);
 			if(targetArray[currentIndex+1] != "Sup|ROSA" || targetArray[currentIndex] != "Sup|ROSA"){
@@ -201,7 +200,7 @@ function checkORAS_content(game, targetArray){
 			}
 		});
 	}
-	else if(isSixthGeneration && game == "ROSA" && targetArray.indexOf("Sup|ROSA") != -1){
+	else if(isSixthGeneration && game == "ROSA" && targetArray !== null && targetArray.indexOf("Sup|ROSA") != -1){
 		holder = targetArray.filter(function(filtered){
 			var currentIndex = targetArray.indexOf(filtered);
 			if(targetArray[currentIndex] != "Sup|ROSA"){
@@ -232,3 +231,5 @@ Array.prototype.convertToNames = function(){
 		}
 	});
 }
+
+document.getElementById("currentyear").innerHTML = new Date().getYear() + 1900;
