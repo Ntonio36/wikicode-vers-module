@@ -16,7 +16,7 @@ Wikitexte d'entrée <br />
 <textarea cols=80 rows=20 id="input"></textarea>
 <center>Génération <select id="gen" onchange="checkSixthGen(this)"><option></option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option></select> Type d'apprentissage <select id="learnsetType" onchange="toggleOptions(this.value !== '')"><option></option><option>Reproduction</option><option>Donneur de Capacités</option></select>
 <br />
-Séparateur de lignes <select id="rowSeparator"><option></option><option>|-</option><option>| -</option></select><br />
+Séparateur de lignes <select id="rowSeparator"><option></option><option>|-</option><option value="| -">| espace -</option></select><br />
 <span id="additionalOptions" style="display:none"><input type="radio" name="learningWay" id="wikicode" onclick="releaseInput()" /> Wikicode traditionnel <input id="template" type="radio" name="learningWay" onclick="releaseInput()" /> Le wikitexte utilise des modèles <input type="radio" id="noLearn" name="learningWay" /> N'apprend aucune capacité par ce biais <br /></span>
 <span id="xyORAS" style="display:none"><input id="XY" checked type="radio" name="6thGen" /> Dans XY <input id="ROSA" type="radio" name="6thGen" /> Dans ROSA <br /></span>
 <br />

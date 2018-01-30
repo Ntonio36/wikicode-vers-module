@@ -120,13 +120,18 @@
 					count++;
 				}
 
-				let realMovesText = text.split(separator);
+				let realMovesText = text.split(separator);				
 				if (realMovesText.length === 1) {
 					alert("Peut-être que vous avez utilisé le mauvais séparateur ?");
 					return;
 				}
 				realMovesText.splice(0, 1);
-				realMovesText.pop();
+				var lastElem = realMovesText[realMovesText.length - 1];
+				if (lastElem === "|}") {
+					realMovesText.pop();
+				} else {
+					realMovesText[realMovesText.length - 1] = lastElem.remove("\n|}");
+				}
 				// Si le séparateur est valide, se débarrasser de l'en-tête et du pied
 				for (i = 0; i < realMovesText.length; i++) {
 					let line = realMovesText[i];
@@ -155,7 +160,7 @@
 					}
 					moveName = moveName.remove("| ").remove(/.+\|/).remove("]]").remove("[[").trim();
 					if (cost) {
-						finalWikitext += moveName + " / " + mapSpot + " / " + cost.replace("Pco", "[[PCo]]") + "\n";
+						finalWikitext += moveName + " / " + mapSpot + " / " + cost.remove("Pco") + "\n";
 					}
 				}
 				finalWikitext += "}}";
