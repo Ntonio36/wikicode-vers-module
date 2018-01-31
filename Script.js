@@ -7,14 +7,13 @@
 	if (generation === 6) {
 		var game = document.querySelector("input[name='6thGen']:checked").id; // XY ou ROSA ?
 	}
-	var header = text.match(/\{\|.+/);
-	var tableType = header[0].match(/"tableaustandard (.+?)"/)[1].toString();
 	switch (objectif) {
 		case "Reproduction" :
+			var Type = document.getElementById("Type").value;
 			if (document.getElementById("noLearn").checked) {
-				finalWikitext = "{{#invoke:Apprentissage|reproduction|génération="+generation+"| type="+ tableType+"|Aucune}}";
+				finalWikitext = "{{#invoke:Apprentissage|reproduction|génération="+generation+"|type="+Type+"|Aucune}}";
 			} else {
-				finalWikitext = "{{#invoke:Apprentissage|reproduction|génération="+generation+"| type="+ tableType+"|\n";
+				finalWikitext = "{{#invoke:Apprentissage|reproduction|génération="+generation+"|type="+Type+"|\n";
 				var isTemplate = document.getElementById("template").checked;
 				var naturalParents = [];
 				var chainParents = [];
@@ -25,10 +24,10 @@
 					for (i = 0; i < templateTextBlocks.length; i++) {
 						var templateArguments = templateTextBlocks[i].split("\n|");
 						var moveName = templateArguments[0].remove(/.{1,}\|/g).trim();
-						if (templateArguments[1].indexOf("miniature") != -1) {
+						if (templateArguments[1].indexOf("miniature") !== -1) {
 							naturalParents = templateArguments[1].match(/\d{3}([a-z]|)/g);
 						}
-						if (templateArguments[2].indexOf("miniature") != -1) {
+						if (templateArguments[2].indexOf("miniature") !== -1) {
 							chainParents = templateArguments[2].match(/\d{3}([a-z]|)/g);
 						}
 						if (naturalParents) {
@@ -56,7 +55,7 @@
 					var text_rows = text.split(separator);
 					for (b = 0; b < text_rows.length; b++) {
 						var rawMoveSections = text_rows[b].split("\n|");
-						if (rawMoveSections.length == 1) {
+						if (rawMoveSections.length === 1) {
 							rawMoveSections = text_rows[b].split("||");
 						}
 						var moveSections = rawMoveSections.toString().remove(/\n/g).split(",");
@@ -96,7 +95,9 @@
 			}
 		break;
 		case "Donneur de Capacités" :
-			finalWikitext = "{{#invoke:Apprentissage|donneur|génération="+generation+"| type="+ tableType+"|";
+			var header = text.match(/\{\|.+/);
+			var tableType = header[0].match(/"tableaustandard (.+?)"/)[1].toString();
+			finalWikitext = "{{#invoke:Apprentissage|donneur|génération="+generation+"|type="+ tableType+"|";
 			if (document.getElementById("noLearn").checked) {
 				finalWikitext += "Aucune}}";
 			} else {
@@ -204,7 +205,7 @@ function releaseInput(){
 }
 
 function checkSixthGen(dom){
-	if (dom.value === 6) {
+	if (dom.value === "6") {
 		document.getElementById("xyORAS").style.display = "inline";
 	} else {
 		document.getElementById("xyORAS").style.display = "none";
@@ -215,17 +216,26 @@ function checkSixthGen(dom){
 	}
 }
 
+function checkConvertType(dom) {
+	if (dom.value === "Donneur de Capacités") {
+		document.getElementById("tableType").style.display = "none";
+	} else {
+		document.getElementById("tableType").style.display = "inline";
+		document.getElementById("rowSeparator").style.display = "none";
+	}
+}
+
 function checkORAS_content(game, targetArray){
 	var holder = [];
-	var isSixthGeneration = document.getElementById("gen").value == 6;
-	if (isSixthGeneration && game == "XY" && targetArray !== null && targetArray.indexOf("Sup|ROSA") != -1) {
+	var isSixthGeneration = document.getElementById("gen").value === "6";
+	if (isSixthGeneration && game === "XY" && targetArray !== null && targetArray.indexOf("Sup|ROSA") != -1) {
 		holder = targetArray.filter(function(filtered){
 			var currentIndex = targetArray.indexOf(filtered);
-			if (targetArray[currentIndex+1] != "Sup|ROSA" || targetArray[currentIndex] != "Sup|ROSA") {
+			if ([targetArray[currentIndex+1], targetArray[currentIndex]].indexOf("Sup|ROSA") !== -1) {
 				return filtered;
 			}
 		});
-	} else if (isSixthGeneration && game == "ROSA" && targetArray !== null && targetArray.indexOf("Sup|ROSA") != -1) {
+	} else if (isSixthGeneration && game === "ROSA" && targetArray !== null && targetArray.indexOf("Sup|ROSA") != -1) {
 		holder = targetArray.filter(function(filtered){
 			var currentIndex = targetArray.indexOf(filtered);
 			if (targetArray[currentIndex] != "Sup|ROSA") {
