@@ -218,10 +218,8 @@ function checkSixthGen(dom){
 
 function checkConvertType(dom) {
 	if (dom.value === "Donneur de Capacités") {
-		document.getElementById("tableType").style.display = "none";
 	} else {
 		document.getElementById("tableType").style.display = "inline";
-		document.getElementById("rowSeparator").style.display = "none";
 	}
 }
 
