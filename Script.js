@@ -102,11 +102,11 @@
 				finalWikitext += "Aucune}}";
 			} else {
 				finalWikitext += "\n";
-				let headers = text.match(/\!.+\|\|.+(?:\n)/).toString().split("||");
+				let headers = text.match(/\!.+\|\|.+(?:\n)/m).toString().split("||");
 				let movePlace, mapPlace, usedMoveTerm;
 				let count = 0;
 				for (term of headers) {
-					let temp = term.remove(/[^A-z]/).trim();
+					let temp = term.remove(/[!\[\[\]\]]/g).trim();
 					switch (temp) {
 						case "Attaque":
 						case "Capacité":
@@ -114,6 +114,8 @@
 							usedMoveTerm = temp;
 							break;
 						case "Emplacement":
+						case "Donneur":
+						case "Localisation":
 							mapSpot_place = count;
 							break;
 						default: "";
@@ -139,6 +141,7 @@
 					let separateElements = line.split("||");
 					let mapSpot = separateElements[mapSpot_place];
 					let moveName = separateElements[movePlace];
+					console.log(separateElements, movePlace);
 					var cost = separateElements[separateElements.length-1].trim();
 					mapSpot = mapSpot.remove("|").trim();
 					var quantity = 0;
@@ -161,7 +164,7 @@
 					}
 					moveName = moveName.remove("| ").remove(/.+\|/).remove("]]").remove("[[").trim();
 					if (cost) {
-						finalWikitext += moveName + " / " + mapSpot + " / " + cost.remove("Pco") + "\n";
+						finalWikitext += (moveName + " / " + mapSpot + " / " + cost.remove(/(\[\[|)pco(\]\]|)/ig)).trim() + "\n";
 					}
 				}
 				finalWikitext += "}}";
