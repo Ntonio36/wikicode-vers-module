@@ -20,6 +20,7 @@ Pour celles à apprendre par move tutor :
 - Appuyer sur "Convertir". Le résultat devrait être conforme au Module Apprentissage tel qu'il fonctionne actuellement.
 
 _Antisèche : Les modèles utilisent des crochets `{{ }}`, tandis que le wikitexte est le mélange de `||`, `[[ ]]`, `{| |}`..._
+
 _Note : tous les paramètres sont nécessaires à la génération correcte du code_
 
 
